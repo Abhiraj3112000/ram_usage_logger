@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -51,14 +52,17 @@ class MemoryLogger {
     final dir = await getApplicationDocumentsDirectory();
     final file = File("${dir.path}/memory_report.csv");
     await file.writeAsString(generateCsv());
-    print("📄 CSV Report saved at: ${file.path}");
+    if (kDebugMode) {
+      print("📄 CSV Report saved at: ${file.path}");
+    }
     return file.path;
   }
 
   /// Share CSV report
   Future<void> shareReport() async {
     final path = await saveReport();
-    await Share.shareXFiles([XFile(path)], text: "Memory Profiling Report (CSV)");
+    await Share.shareXFiles([XFile(path)],
+        text: "Memory Profiling Report (CSV)");
   }
 }
 
